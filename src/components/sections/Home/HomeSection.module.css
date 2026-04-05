@@ -1,0 +1,63 @@
+.home {
+  padding: 0;
+}
+
+.homeSlider {
+  width: 100%;
+}
+
+.slide {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 2rem;
+  padding-top: 9rem;
+  padding-bottom: 3rem;
+  padding-left: 7%;
+  padding-right: 7%;
+}
+
+.slideContent {
+  flex: 1 1 45rem;
+}
+
+.slideImage {
+  flex: 1 1 45rem;
+}
+
+.slideImage img {
+  width: 100%;
+  display: block;
+}
+
+.slideLabel {
+  color: var(--green);
+  font-size: 2.5rem;
+  text-transform: capitalize;
+  display: block;
+}
+
+.slideTitle {
+  color: var(--black);
+  font-size: 7rem;
+  text-transform: capitalize;
+  margin: 0.4rem 0;
+}
+
+.slideDesc {
+  color: var(--light-color);
+  font-size: 2.2rem;
+  padding: 0.5rem 0;
+  line-height: 1.5;
+}
+
+/* Override Swiper pagination dot active color */
+:global(.swiper-pagination-bullet-active) {
+  background: var(--green);
+}
+
+@media (max-width: 768px) {
+  .slideTitle {
+    font-size: 5rem;
+  }
+}

@@ -1,0 +1,153 @@
+.contact {
+  padding: 2rem 7%;
+}
+
+.contactBox {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+}
+
+.contactBox .map {
+  flex: 1 1 40rem;
+  width: 100%;
+  padding: 1.5rem;
+  box-shadow: var(--box-shadow);
+  border: 0.1rem solid rgba(0, 0, 0, 0.1);
+  border-radius: 0.5rem;
+  min-height: 40rem;
+}
+
+.form {
+  flex: 1 1 45rem;
+  padding: 2.5rem;
+  background: #fff;
+  box-shadow: var(--box-shadow);
+  border: 0.1rem solid rgba(0, 0, 0, 0.1);
+  border-radius: 0.5rem;
+}
+
+.inputBox {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.input {
+  width: 49%;
+  margin: 1rem 0;
+}
+
+.inputFull {
+  width: 100%;
+  margin: 1rem 0;
+}
+
+.inputLabel {
+  display: block;
+  font-size: 1.7rem;
+  color: var(--black);
+  margin-bottom: 0.5rem;
+}
+
+.required {
+  color: #e74c3c;
+}
+
+.control {
+  width: 100%;
+  padding: 1.5rem;
+  font-size: 1.6rem;
+  color: var(--black);
+  background: #f7f7f7;
+  border-radius: 0.5rem;
+  border: 0.1rem solid rgba(0, 0, 0, 0.1);
+  outline: none;
+}
+
+.control:focus {
+  border-color: var(--green);
+}
+
+.controlError {
+  border-color: #e74c3c;
+}
+
+.errorMsg {
+  color: #e74c3c;
+  font-size: 1.4rem;
+  margin-top: 0.5rem;
+}
+
+.successBox {
+  text-align: center;
+  padding: 5rem 2rem;
+  background: #fff;
+  border-radius: 0.5rem;
+  box-shadow: var(--box-shadow);
+}
+
+.successBox i {
+  font-size: 7rem;
+  color: var(--green);
+  margin-bottom: 2rem;
+}
+
+.successBox h3 {
+  font-size: 3rem;
+  color: var(--black);
+  margin-bottom: 1rem;
+}
+
+.successBox p {
+  font-size: 1.8rem;
+  color: var(--light-color);
+  margin-bottom: 2rem;
+}
+
+/* ── Contact Details ── */
+.detailsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+  gap: 2rem;
+  margin-top: 4rem;
+}
+
+.detailCard {
+  text-align: center;
+  padding: 3rem;
+  background: #fff;
+  box-shadow: var(--box-shadow);
+  border: 0.1rem solid rgba(0, 0, 0, 0.1);
+  border-radius: 0.5rem;
+  transition: transform 0.3s;
+}
+
+.detailCard:hover {
+  transform: translateY(-0.5rem);
+  border-color: var(--green);
+}
+
+.detailCard i {
+  font-size: 3.5rem;
+  color: var(--green);
+  margin-bottom: 1.5rem;
+}
+
+.detailCard h4 {
+  font-size: 2rem;
+  color: var(--black);
+  margin-bottom: 1rem;
+}
+
+.detailCard p {
+  font-size: 1.5rem;
+  color: var(--light-color);
+  line-height: 1.5;
+}
+
+@media (max-width: 768px) {
+  .input {
+    width: 100%;
+  }
+}

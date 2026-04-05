@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <meta
+    http-equiv="Content-Security-Policy"
+    content="
+      default-src 'self';
+      script-src  'self' 'unsafe-inline' 'unsafe-eval' https://cdnjs.cloudflare.com https://unpkg.com;
+      style-src   'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://unpkg.com;
+      font-src    'self' data: https://fonts.gstatic.com https://cdnjs.cloudflare.com https://unpkg.com;
+      img-src     'self' data: blob: https://*.googleapis.com https://*.gstatic.com https://cdnjs.cloudflare.com https://unpkg.com;
+      frame-src   'self' https://www.google.com;
+      connect-src 'self' ws://localhost:* http://localhost:* ws://127.0.0.1:* http://127.0.0.1:*;
+    "
+  />
+
+  <title>Able Restaurant</title>
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="/images/dish-1.png" />
+
+  <!-- Font Awesome 6.6.0 -->
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+    referrerpolicy="no-referrer"
+    crossorigin="anonymous"
+  />
+</head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>

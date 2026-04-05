@@ -1,0 +1,176 @@
+.footer {
+  padding: 2rem 7%;
+  background: #eee;
+}
+
+/* ── Grid ── */
+.boxContainer {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(25rem, 1fr));
+  gap: 1.5rem;
+  align-items: start;
+  justify-items: start;
+}
+
+/* ── Column headings ── */
+.boxHeading {
+  padding: 0.5rem 0 1rem;
+  font-size: 2.5rem;
+  color: var(--black);
+  text-transform: capitalize;
+}
+
+/* ── Links ── */
+.box,
+.address {
+  display: flex;
+  flex-direction: column;
+}
+
+.address {
+  font-style: normal;
+}
+
+.link {
+  display: block;
+  padding: 0.4rem 0;
+  font-size: 1.5rem;
+  color: var(--light-color);
+  text-decoration: none;
+  text-transform: none;
+  transition: color 0.2s linear;
+  word-break: break-word;
+}
+
+.link:hover {
+  color: var(--green);
+  text-decoration: underline;
+}
+
+/* ── Social icon row ── */
+.socialWrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.socialIcons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding-top: 0.5rem;
+}
+
+.socialIcon {
+  position: relative;
+  background: #ffffff;
+  border-radius: 50%;
+  width: 5rem;
+  height: 5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.2rem;
+  color: #333;
+  text-decoration: none;
+  box-shadow: 0 10px 10px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+/* ── Tooltip ── */
+.tooltip {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 1.4rem;
+  background: #fff;
+  color: #fff;        /* overridden per-platform on hover */
+  padding: 5px 8px;
+  border-radius: 5px;
+  box-shadow: 0 10px 10px rgba(0, 0, 0, 0.1);
+  opacity: 0;
+  pointer-events: none;
+  white-space: nowrap;
+  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.tooltip::before {
+  position: absolute;
+  content: '';
+  height: 8px;
+  width: 8px;
+  background: #fff;
+  bottom: -3px;
+  left: 50%;
+  transform: translateX(-50%) rotate(45deg);
+  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.socialIcon:hover .tooltip {
+  top: -4.5rem;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* ── Per-platform brand colours ── */
+.facebook:hover,
+.facebook:hover .tooltip,
+.facebook:hover .tooltip::before {
+  background-color: #3b5999;
+  color: #fff;
+}
+
+.twitter:hover,
+.twitter:hover .tooltip,
+.twitter:hover .tooltip::before {
+  background-color: #46c1f6;
+  color: #fff;
+}
+
+.instagram:hover,
+.instagram:hover .tooltip,
+.instagram:hover .tooltip::before {
+  background-color: #e1306c;
+  color: #fff;
+}
+
+.whatsapp:hover,
+.whatsapp:hover .tooltip,
+.whatsapp:hover .tooltip::before {
+  background-color: #10bd66;
+  color: #fff;
+}
+
+.youtube:hover,
+.youtube:hover .tooltip,
+.youtube:hover .tooltip::before {
+  background-color: #de463b;
+  color: #fff;
+}
+
+/* ── Credit bar ── */
+.credit {
+  text-align: center;
+  border-top: 0.1rem solid rgba(0, 0, 0, 0.1);
+  font-size: 2rem;
+  color: var(--black);
+  padding: 1.5rem 0.5rem 0.5rem;
+  margin-top: 1.5rem;
+  text-transform: none;
+}
+
+.creditName {
+  color: var(--green);
+}
+
+.dev{
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+  color: black;
+  font-size: 12px;
+}
+.dev a{
+  color: var(--green);
+}

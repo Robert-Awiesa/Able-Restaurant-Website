@@ -1,0 +1,118 @@
+.order {
+  padding: 2rem 7%;
+}
+
+/* ── Form shell ── */
+.form {
+  max-width: 90rem;
+  border-radius: 0.5rem;
+  box-shadow: var(--box-shadow);
+  border: 0.1rem solid rgba(0, 0, 0, 0.2);
+  background: #fff;
+  padding: 2rem;
+  margin: 0 auto;
+}
+
+/* ── Row of two inputs ── */
+.inputBox {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+/* ── Individual field ── */
+.input {
+  width: 49%;
+  min-width: 24rem;
+  flex: 1 1 24rem;
+}
+
+.inputLabel {
+  display: block;
+  padding: 0.5rem 0;
+  font-size: 1.5rem;
+  color: var(--light-color);
+  text-transform: capitalize;
+}
+
+.required {
+  color: #e74c3c;
+}
+
+/* ── Text inputs & textareas ── */
+.control {
+  background: #eee;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  font-size: 1.6rem;
+  color: var(--black);
+  text-transform: none;
+  margin-bottom: 0.4rem;
+  width: 100%;
+  border: 0.1rem solid transparent;
+  transition: border-color 0.2s linear;
+  font-family: inherit;
+  resize: vertical;
+}
+
+.control:focus {
+  outline: none;
+  border-color: var(--green);
+}
+
+.controlError {
+  border-color: #e74c3c !important;
+}
+
+textarea.control {
+  height: 16rem;
+  resize: none;
+}
+
+/* ── Inline error message ── */
+.errorMsg {
+  font-size: 1.3rem;
+  color: #e74c3c;
+  margin: 0 0 0.8rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+/* ── Success state ── */
+.successBox {
+  max-width: 90rem;
+  margin: 0 auto;
+  text-align: center;
+  padding: 5rem 2rem;
+  background: #fff;
+  border-radius: 0.5rem;
+  box-shadow: var(--box-shadow);
+  border: 0.1rem solid rgba(0, 0, 0, 0.2);
+}
+
+.successBox i {
+  font-size: 6rem;
+  color: var(--green);
+  display: block;
+  margin-bottom: 1.5rem;
+}
+
+.successBox h3 {
+  font-size: 3rem;
+  color: var(--black);
+  margin-bottom: 1rem;
+}
+
+.successBox p {
+  font-size: 1.8rem;
+  color: var(--light-color);
+  margin-bottom: 2rem;
+}
+
+@media (max-width: 450px) {
+  .input {
+    width: 100%;
+  }
+}

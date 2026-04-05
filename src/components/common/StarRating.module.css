@@ -1,0 +1,10 @@
+.container {
+  display: flex;
+  gap: 0.2rem;
+  padding: 1rem 0;
+}
+
+.star {
+  font-size: 1.7rem;
+  color: var(--green);
+}

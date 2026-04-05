@@ -1,0 +1,107 @@
+.menu {
+  padding: 2rem 7%;
+}
+
+.boxContainer {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(30rem, 1fr));
+  gap: 1.5rem;
+}
+
+/* ── Card ── */
+.box {
+  background: #fff;
+  border: 0.1rem solid rgba(0, 0, 0, 0.2);
+  border-radius: 0.5rem;
+  box-shadow: var(--box-shadow);
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Image wrapper ── */
+.imageWrapper {
+  height: 25rem;
+  width: 100%;
+  padding: 1.5rem;
+  overflow: hidden;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.img {
+  height: 100%;
+  width: 100%;
+  border-radius: 0.5rem;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.3s ease;
+}
+
+.box:hover .img {
+  transform: scale(1.04);
+}
+
+.heartBtn {
+  position: absolute;
+  top: 2.5rem;
+  right: 2.5rem;
+  height: 5rem;
+  width: 5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  background: #fff;
+  border: none;
+  border-radius: 50%;
+  color: var(--black);
+  cursor: pointer;
+  transition: all 0.2s linear;
+}
+
+.heartBtn:hover {
+  background: var(--green);
+  color: #fff;
+}
+
+.activeHeart {
+  background: var(--green) !important;
+  color: #fff !important;
+}
+
+/* ── Text content ── */
+.content {
+  padding: 2rem;
+  padding-top: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.name {
+  color: var(--black);
+  font-size: 2.5rem;
+  text-transform: capitalize;
+}
+
+.description {
+  color: var(--light-color);
+  font-size: 1.6rem;
+  padding: 0.5rem 0;
+  line-height: 1.5;
+  flex: 1;
+}
+
+.footer {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-top: auto;
+}
+
+.price {
+  color: var(--green);
+  font-size: 2.5rem;
+  font-weight: 700;
+}
