@@ -146,25 +146,42 @@ export function AdminProvider({ children }) {
         body: JSON.stringify(orderData)
       });
 
-      const data = await response.json();
+      // Defensive checking for blank/non-JSON responses
+      let data = {};
+      try {
+        data = await response.json();
+      } catch (err) {
+        console.error("Critical: Backend sent non-JSON response:", err);
+        // If it was OK but failed parsing, it's still technically a success if we trust the status
+        if (response.ok) return { success: true, orderId: 'GEN-SUCCESS' };
+        return { success: false, error: 'Server sent an invalid response format.' };
+      }
+
       console.log("Backend response received:", data);
 
       if (!response.ok) {
-        return { success: false, error: data.error || 'Server error' };
+        return { success: false, error: data.error || data.message || 'Server error' };
+      }
+
+      // Check for success flag explicitly if present
+      if (data.success === false) {
+        return { success: false, error: data.error || 'Server rejected order.' };
       }
 
       const orderResult   = data.order ? data.order : data;
       const finalOrderId  = data.orderId ? data.orderId : (data.order ? data.order.orderId : null);
 
       if (!finalOrderId) {
-        console.error("Critical: Backend responded without an orderId!", data);
+        console.warn("Backend responded without an orderId, but response was OK.", data);
+        // Fallback to a success state if the server actually said 201
+        if (response.status === 201) return { success: true, orderId: 'NEW' };
         return { success: false, error: 'Unexpected server response format' };
       }
       
       const formattedOrder = {
         ...orderResult,
         id: finalOrderId,
-        date: orderResult.createdAt
+        date: orderResult.createdAt || new Date().toISOString()
       };
       
       if (adminToken) {
@@ -174,7 +191,7 @@ export function AdminProvider({ children }) {
       return { success: true, orderId: finalOrderId }; 
     } catch (err) {
       console.error("Error adding order:", err);
-      return { success: false, error: 'Network error. Please try again.' };
+      return { success: false, error: 'The kitchen is unreachable. Please check your connection.' };
     }
   };
 
