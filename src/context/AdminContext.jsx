@@ -4,6 +4,7 @@ const AdminContext = createContext();
 
 export function AdminProvider({ children }) {
   const [orders, setOrders] = useState([]);
+  const [checkingAuth, setCheckingAuth] = useState(true);
   const [adminToken, setAdminToken] = useState(() => {
     return localStorage.getItem('admin_token') || null;
   });
