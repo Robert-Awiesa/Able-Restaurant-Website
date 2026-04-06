@@ -133,32 +133,32 @@ export function AdminProvider({ children }) {
         body: JSON.stringify(orderData)
       });
 
-      // Check HTTP status before trying to parse JSON
       if (!response.ok) {
-        const errText = await response.text();
-        console.error("Order creation failed:", response.status, errText);
+        console.error("Order creation failed HTTP status:", response.status);
         return null;
       }
-      
-      const newOrder = await response.json();
 
-      // Guard: if backend didn't return an orderId, treat as failure
-      if (!newOrder || !newOrder.orderId) {
-        console.error("Backend returned unexpected response:", newOrder);
+      const data = await response.json();
+
+      // NEW: Check if the backend confirms success with my new explicit flag
+      if (!data.success || !data.orderId) {
+        console.error("Backend didn't confirm order success:", data);
         return null;
       }
       
+      const newOrder = data.order;
       const formattedOrder = {
         ...newOrder,
-        id: newOrder.orderId,
+        id: data.orderId,
         date: newOrder.createdAt
       };
       
+      // Update local state if admin is currently viewing
       if (adminToken) {
         setOrders(prev => [formattedOrder, ...prev]);
       }
       
-      return formattedOrder.id;
+      return data.orderId; // Return true success!
     } catch (err) {
       console.error("Error adding order:", err);
       return null;
