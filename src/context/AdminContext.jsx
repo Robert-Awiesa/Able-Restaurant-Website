@@ -57,10 +57,17 @@ export function AdminProvider({ children }) {
           // Token expired or invalid
           logout();
         }
-        throw new Error('Failed to fetch orders');
+        throw new Error(`Failed to fetch orders: ${response.statusText}`);
       }
       
       const data = await response.json();
+      
+      // Ensure we have an array
+      if (!Array.isArray(data)) {
+        console.warn("Backend didn't return an array of orders:", data);
+        setOrders([]);
+        return;
+      }
       
       // Map database fields to what the frontend expects
       const formattedOrders = data.map(order => {
@@ -70,7 +77,7 @@ export function AdminProvider({ children }) {
         return {
           ...order,
           id: order.orderId,
-          date: order.createdAt,
+          date: order.createdAt || new Date().toISOString(), // Fallback date
           status: normalizedStatus
         };
       });
