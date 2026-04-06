@@ -7,9 +7,10 @@ export default function LoginForm() {
   const [error,    setError]    = useState(false);
   const { login }               = useAdmin();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (login(password)) {
+    const success = await login(password);
+    if (success) {
       setError(false);
     } else {
       setError(true);

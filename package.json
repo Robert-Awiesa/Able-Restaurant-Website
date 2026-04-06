@@ -2,6 +2,7 @@
   "name": "able-restaurant",
   "private": true,
   "version": "1.0.0",
+  "description": "Restaurant website for able restaurant",
   "type": "module",
   "scripts": {
     "dev":     "vite",

@@ -1,98 +1,175 @@
-import { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { createContext, useContext, useState, useEffect } from 'react';
 
 const AdminContext = createContext();
 
-/** Generate a unique alphanumeric order code, e.g. "suf204" */
-const generateOrderId = (existingOrders = []) => {
-  const letters = 'abcdefghijklmnopqrstuvwxyz';
-  const digits  = '0123456789';
-  const rand = (src, n) => Array.from({ length: n }, () => src[Math.floor(Math.random() * src.length)]).join('');
-  let code;
-  do {
-    code = rand(letters, 3) + rand(digits, 3); // e.g. "suf204"
-  } while (existingOrders.some(o => o.id === code));
-  return code;
-};
-
-const MOCK_ORDERS = [
-
-];
-
 export function AdminProvider({ children }) {
-  const readFromStorage = () => {
-    try {
-      const saved = localStorage.getItem('admin_orders');
-      return saved ? JSON.parse(saved) : MOCK_ORDERS;
-    } catch { return MOCK_ORDERS; }
-  };
-
-  const [orders, setOrders] = useState(readFromStorage);
-  const [lastRefreshed, setLastRefreshed] = useState(new Date());
-
-  const [isAuthenticated, setIsAuthenticated] = useState(() => {
-    return localStorage.getItem('admin_auth') === 'true';
+  const [orders, setOrders] = useState([]);
+  const [adminToken, setAdminToken] = useState(() => {
+    return localStorage.getItem('admin_token') || null;
   });
 
-  // Persist orders to localStorage whenever they change
+  const isAuthenticated = !!adminToken;
+
+  // Base API URLs
+  const API_URL = 'http://localhost:5000/api/orders';
+  const AUTH_URL = 'http://localhost:5000/api/auth';
+
+  // Helper to get authorization headers
+  const getAuthHeaders = () => ({
+    'Content-Type': 'application/json',
+    ...(adminToken ? { 'Authorization': `Bearer ${adminToken}` } : {})
+  });
+
+  // Sync token to localStorage
   useEffect(() => {
-    localStorage.setItem('admin_orders', JSON.stringify(orders));
-  }, [orders]);
-
-  // Auto-reload: cross-tab sync via storage event + 5s polling fallback
-  useEffect(() => {
-    const sync = () => {
-      setOrders(readFromStorage());
-      setLastRefreshed(new Date());
-    };
-
-    // Fires when ANOTHER tab writes to localStorage
-    window.addEventListener('storage', sync);
-
-    // Fallback polling every 5 seconds (catches same-tab edge cases)
-    const timer = setInterval(sync, 5000);
-
-    return () => {
-      window.removeEventListener('storage', sync);
-      clearInterval(timer);
-    };
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem('admin_auth', isAuthenticated);
-  }, [isAuthenticated]);
-
-  const login = (password) => {
-    if (password === 'admin123') { // Mock password
-      setIsAuthenticated(true);
-      return true;
+    if (adminToken) {
+      localStorage.setItem('admin_token', adminToken);
+    } else {
+      localStorage.removeItem('admin_token');
     }
-    return false;
+  }, [adminToken]);
+
+  // Fetch orders from the backend (Protected route)
+  const fetchOrders = async () => {
+    // Only attempt to fetch if we have a token (since it's a protected route)
+    if (!adminToken) return;
+
+    try {
+      const response = await fetch(API_URL, {
+        headers: getAuthHeaders()
+      });
+      
+      if (!response.ok) {
+        if (response.status === 401) {
+          // Token expired or invalid
+          logout();
+        }
+        throw new Error('Failed to fetch orders');
+      }
+      
+      const data = await response.json();
+      
+      // Map database fields to what the frontend expects
+      const formattedOrders = data.map(order => {
+        let normalizedStatus = (order.status || 'pending').toLowerCase();
+        if (normalizedStatus === 'preparing' || normalizedStatus === 'ready') normalizedStatus = 'processing';
+        
+        return {
+          ...order,
+          id: order.orderId,
+          date: order.createdAt,
+          status: normalizedStatus
+        };
+      });
+      setOrders(formattedOrders);
+    } catch (err) {
+      console.error("Error fetching orders:", err);
+    }
+  };
+
+  // Initial fetch and polling every 5 seconds for new orders
+  useEffect(() => {
+    if (isAuthenticated) {
+      fetchOrders();
+      const timer = setInterval(fetchOrders, 5000);
+      return () => clearInterval(timer);
+    }
+  }, [isAuthenticated, adminToken]);
+
+  // Authenticate against backend
+  const login = async (password) => {
+    try {
+      const response = await fetch(`${AUTH_URL}/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password })
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setAdminToken(data.token);
+        return true;
+      }
+      return false;
+    } catch (err) {
+      console.error("Login failed:", err);
+      return false;
+    }
   };
 
   const logout = () => {
-    setIsAuthenticated(false);
+    setAdminToken(null);
+    setOrders([]);
   };
 
-  const updateOrderStatus = (orderId, newStatus) => {
-    setOrders(prev => prev.map(order => 
-      order.id === orderId ? { ...order, status: newStatus } : order
-    ));
+  // Update order status on the backend (Protected route)
+  const updateOrderStatus = async (orderId, newStatus) => {
+    try {
+      const response = await fetch(`${API_URL}/${orderId}/status`, {
+        method: 'PUT',
+        headers: getAuthHeaders(),
+        body: JSON.stringify({ status: newStatus })
+      });
+      
+      if (response.ok) {
+        setOrders(prev => prev.map(order => 
+          order.id === orderId ? { ...order, status: newStatus } : order
+        ));
+      } else if (response.status === 401) {
+        logout();
+      }
+    } catch (err) {
+      console.error("Error updating order status:", err);
+    }
   };
 
-  const addOrder = (orderData) => {
-    const id = generateOrderId(orders);
-    const newOrder = {
-      ...orderData,
-      id,
-      status: 'pending',
-      date: new Date().toISOString(),
-    };
-    setOrders(prev => [newOrder, ...prev]);
-    return id;
+  // Add a new order to the backend (Public Route - No Auth Required)
+  const addOrder = async (orderData) => {
+    try {
+      const response = await fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(orderData)
+      });
+      
+      const newOrder = await response.json();
+      
+      const formattedOrder = {
+        ...newOrder,
+        id: newOrder.orderId,
+        date: newOrder.createdAt
+      };
+      
+      // We don't automatically add it to the state here if the user isn't logged in,
+      // but since 'orders' array is only viewed by Admin, it's fine either way.
+      // Easiest is to just ignore pushing to state if admin is not logged in.
+      if (adminToken) {
+        setOrders(prev => [formattedOrder, ...prev]);
+      }
+      
+      return formattedOrder.id;
+    } catch (err) {
+      console.error("Error adding order:", err);
+      return null;
+    }
   };
 
-  const deleteOrder = (orderId) => {
-    setOrders(prev => prev.filter(order => order.id !== orderId));
+  // Delete an order from the backend (Protected route)
+  const deleteOrder = async (orderId) => {
+    try {
+      const response = await fetch(`${API_URL}/${orderId}`, {
+        method: 'DELETE',
+        headers: getAuthHeaders()
+      });
+
+      if (response.ok) {
+        setOrders(prev => prev.filter(order => order.id !== orderId));
+      } else if (response.status === 401) {
+        logout();
+      }
+    } catch (err) {
+      console.error("Error deleting order:", err);
+    }
   };
 
   return (

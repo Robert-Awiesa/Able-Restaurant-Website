@@ -31,7 +31,7 @@ export default function Cart() {
   const [scheduledTime, setScheduledTime] = useState('');
   const [modal, setModal] = useState(null); // { type: 'success'|'error', message, orderId? }
 
-  const handleCheckout = () => {
+  const handleCheckout = async () => {
     if (cartItems.length === 0) return;
     if (!customerName.trim()) {
       setModal({ type: 'error', message: 'Please enter your name.' });
@@ -56,15 +56,19 @@ export default function Cart() {
       requestedTime: orderTimeType === 'asap' ? 'ASAP' : formatTime(scheduledTime)
     };
 
-    const orderId = addOrder(newOrder);
-
-    setModal({ type: 'success', orderId });
-    clearCart();
-    setLocation('');
-    setCustomerName('');
-    setContact('');
-    setOrderTimeType('asap');
-    setScheduledTime('');
+    const orderId = await addOrder(newOrder);
+    
+    if (orderId) {
+      setModal({ type: 'success', orderId });
+      clearCart();
+      setLocation('');
+      setCustomerName('');
+      setContact('');
+      setOrderTimeType('asap');
+      setScheduledTime('');
+    } else {
+      setModal({ type: 'error', message: 'There was an error communicating with the server.' });
+    }
   };
 
   const handleModalOk = () => {
