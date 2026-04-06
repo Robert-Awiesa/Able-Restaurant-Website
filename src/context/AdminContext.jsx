@@ -9,6 +9,16 @@ export function AdminProvider({ children }) {
   });
 
   const isAuthenticated = !!adminToken;
+  
+  // Helper to generate a random alphanumeric order ID locally
+  const generateLocalOrderId = (length = 6) => {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    let result = '';
+    for (let i = 0; i < length; i++) {
+        result += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return result;
+  };
 
   // Base API URLs - Uses deployed backend URL if online, or localhost locally
   const BACKEND_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
@@ -146,58 +156,67 @@ export function AdminProvider({ children }) {
 
   // Add a new order to the backend (Public Route - No Auth Required)
   const addOrder = async (orderData) => {
+    // 1. Generate a local orderId on the frontend first
+    const generatedId = generateLocalOrderId();
+    const finalOrderData = { ...orderData, orderId: generatedId };
+
+    const verifyFinalStatus = async () => {
+      // 2. Wait 1.5 seconds for the server to finish its background work
+      await new Promise(r => setTimeout(r, 1500));
+      try {
+        const checkRes = await fetch(`${API_URL}/check/${generatedId}`);
+        if (checkRes.ok) {
+          const checkData = await checkRes.json();
+          return checkData.found; // If found, show success!
+        }
+        return false;
+      } catch (err) {
+        return false;
+      }
+    };
+
     try {
       const response = await fetch(API_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(orderData)
+        body: JSON.stringify(finalOrderData)
       });
+
+      // CASE: Server Timeout or Network Error (5xx)
+      if (response.status >= 500) {
+        // Did it actually work? Let's double check!
+        const trulySucceeded = await verifyFinalStatus();
+        if (trulySucceeded) return { success: true, orderId: generatedId };
+        return { success: false, error: 'Server error. Please try again later.' };
+      }
 
       // Defensive checking for blank/non-JSON responses
       let data = {};
       try {
         data = await response.json();
       } catch (err) {
-        console.error("Critical: Backend sent non-JSON response:", err);
-        // If it was OK but failed parsing, it's still technically a success if we trust the status
-        if (response.ok) return { success: true, orderId: 'GEN-SUCCESS' };
-        return { success: false, error: 'Server sent an invalid response format.' };
+        // If status was OK, it's definitely a success
+        if (response.ok) return { success: true, orderId: generatedId };
+        
+        // Double check on parse error!
+        const trulySucceeded = await verifyFinalStatus();
+        if (trulySucceeded) return { success: true, orderId: generatedId };
+        return { success: false, error: 'System busy. We will update you shortly.' };
       }
 
-      console.log("Backend response received:", data);
-
       if (!response.ok) {
+        // If the backend sent a 4xx custom error, don't lie to the user
         return { success: false, error: data.error || data.message || 'Server error' };
       }
 
-      // Check for success flag explicitly if present
-      if (data.success === false) {
-        return { success: false, error: data.error || 'Server rejected order.' };
-      }
-
-      const orderResult   = data.order ? data.order : data;
-      const finalOrderId  = data.orderId ? data.orderId : (data.order ? data.order.orderId : null);
-
-      if (!finalOrderId) {
-        console.warn("Backend responded without an orderId, but response was OK.", data);
-        // Fallback to a success state if the server actually said 201
-        if (response.status === 201) return { success: true, orderId: 'NEW' };
-        return { success: false, error: 'Unexpected server response format' };
-      }
-      
-      const formattedOrder = {
-        ...orderResult,
-        id: finalOrderId,
-        date: orderResult.createdAt || new Date().toISOString()
-      };
-      
-      if (adminToken) {
-        setOrders(prev => [formattedOrder, ...prev]);
-      }
-      
-      return { success: true, orderId: finalOrderId }; 
+      return { success: true, orderId: generatedId }; 
     } catch (err) {
       console.error("Error adding order:", err);
+      
+      // LAST CHANCE: On a network failure, let's verify if the order was saved
+      const trulySucceeded = await verifyFinalStatus();
+      if (trulySucceeded) return { success: true, orderId: generatedId };
+      
       return { success: false, error: 'The kitchen is unreachable. Please check your connection.' };
     }
   };
