@@ -10,9 +10,10 @@ export function AdminProvider({ children }) {
 
   const isAuthenticated = !!adminToken;
 
-  // Base API URLs
-  const API_URL = 'http://localhost:5000/api/orders';
-  const AUTH_URL = 'http://localhost:5000/api/auth';
+  // Base API URLs - Uses deployed backend URL if online, or localhost locally
+  const BACKEND_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+  const API_URL = `${BACKEND_BASE_URL}/api/orders`;
+  const AUTH_URL = `${BACKEND_BASE_URL}/api/auth`;
 
   // Helper to get authorization headers
   const getAuthHeaders = () => ({
