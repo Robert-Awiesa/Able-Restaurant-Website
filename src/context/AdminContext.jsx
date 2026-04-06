@@ -132,8 +132,21 @@ export function AdminProvider({ children }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(orderData)
       });
+
+      // Check HTTP status before trying to parse JSON
+      if (!response.ok) {
+        const errText = await response.text();
+        console.error("Order creation failed:", response.status, errText);
+        return null;
+      }
       
       const newOrder = await response.json();
+
+      // Guard: if backend didn't return an orderId, treat as failure
+      if (!newOrder || !newOrder.orderId) {
+        console.error("Backend returned unexpected response:", newOrder);
+        return null;
+      }
       
       const formattedOrder = {
         ...newOrder,
@@ -141,9 +154,6 @@ export function AdminProvider({ children }) {
         date: newOrder.createdAt
       };
       
-      // We don't automatically add it to the state here if the user isn't logged in,
-      // but since 'orders' array is only viewed by Admin, it's fine either way.
-      // Easiest is to just ignore pushing to state if admin is not logged in.
       if (adminToken) {
         setOrders(prev => [formattedOrder, ...prev]);
       }
