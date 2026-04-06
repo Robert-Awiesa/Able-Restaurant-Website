@@ -10,8 +10,20 @@ import styles       from './AdminDashboard.module.css';
 export default function AdminDashboard() {
   const { isAuthenticated, logout, orders, updateOrderStatus, deleteOrder } = useAdmin();
   const [activeTab, setActiveTab] = useState('orders'); // 'orders' | 'history'
+  const [confirmDelete, setConfirmDelete] = useState(null); // orderId or null
 
   if (!isAuthenticated) return <LoginForm />;
+
+  const handleDeleteClick = (orderId) => {
+    setConfirmDelete(orderId);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (confirmDelete) {
+      await deleteOrder(confirmDelete);
+      setConfirmDelete(null);
+    }
+  };
 
   const pendingCount    = orders.filter(o => o.status === 'pending').length;
   const processingCount = orders.filter(o => o.status === 'processing').length;
@@ -71,10 +83,27 @@ export default function AdminDashboard() {
             orders={orders} 
             tab={activeTab} 
             onUpdate={updateOrderStatus} 
-            onDelete={deleteOrder} 
+            onDelete={handleDeleteClick} 
           />
         </div>
       </main>
+
+      {/* ── Confirmation Modal ── */}
+      {confirmDelete && (
+        <div className={styles.confirmOverlay}>
+          <div className={styles.confirmCard}>
+            <div className={styles.confirmIcon}>
+              <i className="fa-solid fa-triangle-exclamation" />
+            </div>
+            <h4>Wait a moment!</h4>
+            <p>Are you sure you want to permanently delete order <strong>#{confirmDelete}</strong>? This action cannot be undone.</p>
+            <div className={styles.confirmActions}>
+              <button className={styles.cancelBtn} onClick={() => setConfirmDelete(null)}>No, Keep it</button>
+              <button className={styles.confirmBtn} onClick={handleConfirmDelete}>Yes, Delete</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

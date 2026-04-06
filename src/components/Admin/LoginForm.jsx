@@ -4,16 +4,19 @@ import styles     from './AdminDashboard.module.css';
 
 export default function LoginForm() {
   const [password, setPassword] = useState('');
-  const [error,    setError]    = useState(false);
-  const { login }               = useAdmin();
+  const [error, setError] = useState(false);
+  const [errorHeader, setErrorHeader] = useState('');
+  const { login } = useAdmin();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const success = await login(password);
-    if (success) {
+    const response = await login(password);
+    if (response.success) {
       setError(false);
+      setErrorHeader('');
     } else {
       setError(true);
+      setErrorHeader(response.error);
       setPassword('');
     }
   };
@@ -33,7 +36,7 @@ export default function LoginForm() {
           autoFocus
         />
         
-        {error && <p style={{ color: '#e74c3c', fontSize: '1.4rem', marginBottom: '1rem' }}>Incorrect Password!</p>}
+        {error && <p style={{ color: '#e74c3c', fontSize: '1.4rem', marginBottom: '1rem' }}>{errorHeader}</p>}
         
         <button type="submit" className={styles.loginBtn}>Unlock Dashboard</button>
       </form>

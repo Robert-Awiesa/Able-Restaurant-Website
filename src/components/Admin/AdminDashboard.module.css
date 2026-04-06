@@ -399,6 +399,99 @@
   }
 }
 
+/* ── Confirmation Modal ── */
+.confirmOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.confirmCard {
+  background: #fff;
+  padding: 3rem;
+  border-radius: 1.2rem;
+  width: 100%;
+  max-width: 32rem;
+  text-align: center;
+  box-shadow: 0 2rem 6rem rgba(0,0,0,0.2);
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(2rem); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+.confirmIcon {
+  font-size: 4rem;
+  color: #e74c3c;
+  margin-bottom: 1.5rem;
+}
+
+.confirmIcon i {
+  display: block;
+}
+
+.confirmCard h4 {
+  font-size: 2.2rem;
+  color: #2c3e50;
+  margin-bottom: 1rem;
+}
+
+.confirmCard p {
+  font-size: 1.5rem;
+  color: #7f8c8d;
+  margin-bottom: 2.5rem;
+  line-height: 1.5;
+}
+
+.confirmActions {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.confirmBtn, .cancelBtn {
+  flex: 1;
+  padding: 1.2rem;
+  font-size: 1.5rem;
+  font-weight: 600;
+  border-radius: 0.8rem;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+}
+
+.confirmBtn {
+  background: #e74c3c;
+  color: #fff;
+}
+
+.confirmBtn:hover {
+  background: #c0392b;
+  transform: scale(1.02);
+}
+
+.cancelBtn {
+  background: #ecf0f1;
+  color: #7f8c8d;
+}
+
+.cancelBtn:hover {
+  background: #bdc3c7;
+  color: #2c3e50;
+}
+
 @media (max-width: 768px) {
   .adminLayout {
     flex-direction: column;

@@ -56,10 +56,10 @@ export default function Cart() {
       requestedTime: orderTimeType === 'asap' ? 'ASAP' : formatTime(scheduledTime)
     };
 
-    const orderId = await addOrder(newOrder);
+    const result = await addOrder(newOrder);
     
-    if (orderId) {
-      setModal({ type: 'success', orderId });
+    if (result.success) {
+      setModal({ type: 'success', orderId: result.orderId });
       clearCart();
       setLocation('');
       setCustomerName('');
@@ -67,7 +67,7 @@ export default function Cart() {
       setOrderTimeType('asap');
       setScheduledTime('');
     } else {
-      setModal({ type: 'error', message: 'There was an error communicating with the server.' });
+      setModal({ type: 'error', message: result.error });
     }
   };
 

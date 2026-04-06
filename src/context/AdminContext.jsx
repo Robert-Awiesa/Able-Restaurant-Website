@@ -21,10 +21,22 @@ export function AdminProvider({ children }) {
     ...(adminToken ? { 'Authorization': `Bearer ${adminToken}` } : {})
   });
 
-  // Sync token to localStorage
+  // Sync token to localStorage and verify on mount
   useEffect(() => {
     if (adminToken) {
       localStorage.setItem('admin_token', adminToken);
+      // Optional: Verify on mount
+      const verifyToken = async () => {
+        try {
+          const response = await fetch(`${AUTH_URL}/verify`, {
+            headers: getAuthHeaders()
+          });
+          if (!response.ok) logout();
+        } catch (err) {
+          console.error("Token verification failed:", err);
+        }
+      };
+      verifyToken();
     } else {
       localStorage.removeItem('admin_token');
     }
@@ -86,15 +98,16 @@ export function AdminProvider({ children }) {
         body: JSON.stringify({ password })
       });
 
+      const data = await response.json();
+      
       if (response.ok) {
-        const data = await response.json();
         setAdminToken(data.token);
-        return true;
+        return { success: true };
       }
-      return false;
+      return { success: false, error: data.error || 'Invalid Credentials' };
     } catch (err) {
       console.error("Login failed:", err);
-      return false;
+      return { success: false, error: 'Network error. Please try again.' };
     }
   };
 
@@ -133,39 +146,35 @@ export function AdminProvider({ children }) {
         body: JSON.stringify(orderData)
       });
 
-      if (!response.ok) {
-        console.error("Order creation failed HTTP status:", response.status);
-        return null;
-      }
-
       const data = await response.json();
       console.log("Backend response received:", data);
 
-      // PERFECT EXTRACTION LOGIC
-      // If the backend sent my new {success:true, order:{...}, orderId:...} format
-      // OR if it sent the legacy raw Mongo document {...}
-      const orderData    = data.order ? data.order : data;
-      const finalOrderId = data.orderId ? data.orderId : (data.order ? data.order.orderId : null);
+      if (!response.ok) {
+        return { success: false, error: data.error || 'Server error' };
+      }
+
+      const orderResult   = data.order ? data.order : data;
+      const finalOrderId  = data.orderId ? data.orderId : (data.order ? data.order.orderId : null);
 
       if (!finalOrderId) {
         console.error("Critical: Backend responded without an orderId!", data);
-        return null;
+        return { success: false, error: 'Unexpected server response format' };
       }
       
       const formattedOrder = {
-        ...orderData,
+        ...orderResult,
         id: finalOrderId,
-        date: orderData.createdAt
+        date: orderResult.createdAt
       };
       
       if (adminToken) {
         setOrders(prev => [formattedOrder, ...prev]);
       }
       
-      return finalOrderId; 
+      return { success: true, orderId: finalOrderId }; 
     } catch (err) {
       console.error("Error adding order:", err);
-      return null;
+      return { success: false, error: 'Network error. Please try again.' };
     }
   };
 
