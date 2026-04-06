@@ -8,9 +8,18 @@ import styles       from './AdminDashboard.module.css';
  * High-level layout for the administrative interface.
  */
 export default function AdminDashboard() {
-  const { isAuthenticated, logout, orders, updateOrderStatus, deleteOrder } = useAdmin();
+  const { isAuthenticated, checkingAuth, logout, orders, updateOrderStatus, deleteOrder } = useAdmin();
   const [activeTab, setActiveTab] = useState('orders'); // 'orders' | 'history'
   const [confirmDelete, setConfirmDelete] = useState(null); // orderId or null
+
+  // Show a simple loading screen while verifying the token
+  if (checkingAuth) {
+    return (
+      <div style={{ display: 'flex', height: '100vh', alignItems: 'center', justifyContent: 'center', fontSize: '2rem' }}>
+        Verifying Session...
+      </div>
+    );
+  }
 
   if (!isAuthenticated) return <LoginForm />;
 

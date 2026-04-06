@@ -31,22 +31,35 @@ export function AdminProvider({ children }) {
     ...(adminToken ? { 'Authorization': `Bearer ${adminToken}` } : {})
   });
 
-  // Sync token to localStorage and verify on mount
+  // Verify token on initial mount
+  useEffect(() => {
+    const verifyInitialAuth = async () => {
+      if (!adminToken) {
+        setCheckingAuth(false);
+        return;
+      }
+
+      try {
+        const response = await fetch(`${AUTH_URL}/verify`, {
+          headers: getAuthHeaders()
+        });
+        if (!response.ok) {
+          logout();
+        }
+      } catch (err) {
+        console.error("Auth verification failed:", err);
+      } finally {
+        setCheckingAuth(false);
+      }
+    };
+
+    verifyInitialAuth();
+  }, []);
+
+  // Sync token changes to localStorage
   useEffect(() => {
     if (adminToken) {
       localStorage.setItem('admin_token', adminToken);
-      // Optional: Verify on mount
-      const verifyToken = async () => {
-        try {
-          const response = await fetch(`${AUTH_URL}/verify`, {
-            headers: getAuthHeaders()
-          });
-          if (!response.ok) logout();
-        } catch (err) {
-          console.error("Token verification failed:", err);
-        }
-      };
-      verifyToken();
     } else {
       localStorage.removeItem('admin_token');
     }
@@ -243,6 +256,7 @@ export function AdminProvider({ children }) {
     <AdminContext.Provider value={{ 
       orders, 
       isAuthenticated, 
+      checkingAuth,
       login, 
       logout, 
       updateOrderStatus,

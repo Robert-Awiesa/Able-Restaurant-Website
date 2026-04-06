@@ -257,7 +257,7 @@ export default function Cart() {
               {modal.type === 'success' ? (
                 <>
                   <h4>Order Placed!</h4>
-                  <p>Your order <strong>#{modal.orderId}</strong> is now being tracked by our kitchen.</p>
+                  <p>Your order <strong>#{modal.orderId}</strong> has been received by our kitchen.</p>
                   <p className={styles.modalSub}>You'll be served shortly. Thank you! 🍽️</p>
                 </>
               ) : (
