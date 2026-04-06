@@ -139,13 +139,16 @@ export function AdminProvider({ children }) {
       }
 
       const data = await response.json();
+      console.log("Backend response received:", data);
 
-      // EXTRA ROBUST: Look for orderId in either the new .order wrapper or the root object
-      const finalOrderId = data.success ? data.orderId : data.orderId;
-      const orderData    = data.success ? data.order : data;
+      // PERFECT EXTRACTION LOGIC
+      // If the backend sent my new {success:true, order:{...}, orderId:...} format
+      // OR if it sent the legacy raw Mongo document {...}
+      const orderData    = data.order ? data.order : data;
+      const finalOrderId = data.orderId ? data.orderId : (data.order ? data.order.orderId : null);
 
       if (!finalOrderId) {
-        console.error("Backend response missing orderId:", data);
+        console.error("Critical: Backend responded without an orderId!", data);
         return null;
       }
       
