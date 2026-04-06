@@ -140,25 +140,26 @@ export function AdminProvider({ children }) {
 
       const data = await response.json();
 
-      // NEW: Check if the backend confirms success with my new explicit flag
-      if (!data.success || !data.orderId) {
-        console.error("Backend didn't confirm order success:", data);
+      // EXTRA ROBUST: Look for orderId in either the new .order wrapper or the root object
+      const finalOrderId = data.success ? data.orderId : data.orderId;
+      const orderData    = data.success ? data.order : data;
+
+      if (!finalOrderId) {
+        console.error("Backend response missing orderId:", data);
         return null;
       }
       
-      const newOrder = data.order;
       const formattedOrder = {
-        ...newOrder,
-        id: data.orderId,
-        date: newOrder.createdAt
+        ...orderData,
+        id: finalOrderId,
+        date: orderData.createdAt
       };
       
-      // Update local state if admin is currently viewing
       if (adminToken) {
         setOrders(prev => [formattedOrder, ...prev]);
       }
       
-      return data.orderId; // Return true success!
+      return finalOrderId; 
     } catch (err) {
       console.error("Error adding order:", err);
       return null;
