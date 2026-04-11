@@ -25,6 +25,8 @@ import Footer        from './components/sections/Footer/Footer';
 import AdminDashboard    from './components/Admin/AdminDashboard';
 import WhatsAppButton   from './components/WhatsAppButton/WhatsAppButton';
 
+import OrderNotification from './components/common/OrderNotification';
+
 export default function App() {
   const { visible }             = useLoader(3000);
   const { isOpen, open, close }  = useSearchForm();
@@ -66,6 +68,7 @@ export default function App() {
       </main>
 
       <Footer />
+      <OrderNotification />
       <WhatsAppButton />
     </>
   );

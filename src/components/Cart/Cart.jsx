@@ -19,7 +19,8 @@ export default function Cart() {
     cartTotal,
     CURRENCY,
     parsePrice,
-    clearCart
+    clearCart,
+    addCustomerOrder
   } = useCart();
 
   const { addOrder } = useAdmin();
@@ -49,7 +50,13 @@ export default function Cart() {
     const newOrder = {
       name: customerName.trim(),
       phone: contact.trim(),
-      items: cartItems.map(item => ({ name: item.name, qty: item.quantity })),
+      items: cartItems.map(item => ({ 
+        name: item.name, 
+        size: item.selectedSize || null,
+        price: item.price,
+        qty: item.quantity 
+      })),
+
       total: cartTotal,
       orderType,
       location: orderType === 'delivery' ? location : (orderType === 'dine-in' ? 'Table Order' : 'Store Pickup'),
@@ -59,6 +66,13 @@ export default function Cart() {
     const result = await addOrder(newOrder);
     
     if (result.success) {
+      addCustomerOrder({
+        orderId: result.orderId,
+        items: newOrder.items,
+        total: newOrder.total,
+        orderType: newOrder.orderType,
+        status: 'pending'
+      });
       setModal({ type: 'success', orderId: result.orderId });
       clearCart();
       setLocation('');
@@ -120,34 +134,38 @@ export default function Cart() {
                   const itemTotal = unitPrice * item.quantity;
 
                   return (
-                    <div key={item.id} className={styles.cartItem}>
+                    <div key={`${item.id}-${item.selectedSize || 'fixed'}`} className={styles.cartItem}>
                       <img src={item.image} alt={item.name} className={styles.itemImg} />
                       <div className={styles.itemContent}>
                         <h4>{item.name}</h4>
+                        {item.selectedSize && (
+                          <span className={styles.itemSize}>Size: {item.selectedSize}</span>
+                        )}
                         <div className={styles.priceContainer}>
                           <span className={styles.unitPrice}>Unit: {item.price}</span>
                           {item.quantity > 1 && (
-                            <span className={styles.itemTotal}>Total: {CURRENCY}{itemTotal.toFixed(2)}</span>
+                            <span className={styles.itemTotal}>Total: {CURRENCY}{(unitPrice * item.quantity).toFixed(2)}</span>
                           )}
                         </div>
                         <div className={styles.qtyControls}>
-                          <button onClick={() => updateQuantity(item.id, -1)} aria-label="Decrease quantity">
+                          <button onClick={() => updateQuantity(item.id, item.selectedSize, -1)} aria-label="Decrease quantity">
                             <i className="fa-solid fa-minus" />
                           </button>
                           <span>{item.quantity}</span>
-                          <button onClick={() => updateQuantity(item.id, 1)} aria-label="Increase quantity">
+                          <button onClick={() => updateQuantity(item.id, item.selectedSize, 1)} aria-label="Increase quantity">
                             <i className="fa-solid fa-plus" />
                           </button>
                         </div>
                       </div>
                       <button 
                         className={styles.deleteBtn} 
-                        onClick={() => removeFromCart(item.id)}
+                        onClick={() => removeFromCart(item.id, item.selectedSize)}
                         aria-label={`Remove ${item.name} from cart`}
                       >
                         <i className="fa-solid fa-trash" aria-hidden="true" />
                       </button>
                     </div>
+
                   );
                 })}
               </div>

@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import StarRating from '../../common/StarRating';
 import Button     from '../../common/Button';
 import { useCart }  from '../../../context/CartContext';
@@ -7,11 +8,14 @@ import styles     from './MenuSection.module.css';
  * MenuCard
  * Individual card in the today's speciality menu grid.
  *
- * @param {object} item - { id, name, price, rating, image, imageAlt, description }
+ * @param {object} item - { id, name, price, rating, image, imageAlt, description, sizes }
  */
 export default function MenuCard({ item }) {
-  const { name, price, rating, image, imageAlt, description } = item;
+  const { name, price, sizes, rating, image, imageAlt, description } = item;
   const { addToCart, isFavorite, addToFavorites, removeFromFavorites } = useCart();
+
+  const [selectedSize, setSelectedSize] = useState(sizes ? sizes[0] : null);
+  const activePrice = selectedSize ? selectedSize.price : price;
 
   const favorite = isFavorite(item.id);
 
@@ -40,11 +44,32 @@ export default function MenuCard({ item }) {
         {/* <StarRating rating={rating} /> */}
         <h3 className={styles.name}>{name}</h3>
         <p className={styles.description}>{description}</p>
+
+        {sizes && (
+          <div className={styles.sizeSection}>
+            <p className={styles.sizeLabel}>Choose size</p>
+            <div className={styles.sizeBtns}>
+              {sizes.map((s) => (
+                <button
+                  key={s.label}
+                  className={`${styles.sizeBtn} ${selectedSize?.label === s.label ? styles.sizeBtnActive : ''}`}
+                  onClick={() => setSelectedSize(s)}
+                >
+                  {s.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
         <div className={styles.footer}>
-          <span className={styles.price}>{price}</span>
-          <Button onClick={() => addToCart(item)}>add to cart</Button>
+          <span className={styles.price}>{activePrice}</span>
+          <Button onClick={() => addToCart({ ...item, selectedSize: selectedSize?.label, price: activePrice })}>
+            add to cart
+          </Button>
         </div>
       </div>
     </article>
   );
 }
+

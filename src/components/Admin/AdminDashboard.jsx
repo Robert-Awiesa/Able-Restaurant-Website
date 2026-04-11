@@ -174,9 +174,18 @@ function OrderCards({ orders, tab, onUpdate, onDelete }) {
 
             <div className={styles.itemsList}>
               {order.items.map((item, i) => (
-                <div key={i} className={styles.itemRow}>{item.qty}x {item.name}</div>
+                <div key={i} className={styles.itemRow}>
+                  <div className={styles.itemMain}>
+                    <span className={styles.itemQty}>{item.qty}x</span>
+                    <span className={styles.itemName}>{item.name}</span>
+                    {item.size && <span className={styles.itemSize}>({item.size})</span>}
+                  </div>
+                  <span className={styles.itemRowPrice}>{item.price}</span>
+                </div>
+
               ))}
             </div>
+
 
             <div className={styles.totalRow}>
               <span>Total:</span>

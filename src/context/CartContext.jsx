@@ -40,24 +40,30 @@ export function CartProvider({ children }) {
 
   const addToCart = (item) => {
     setCartItems((prev) => {
-      const existing = prev.find((i) => i.id === item.id);
+      const existing = prev.find(
+        (i) => i.id === item.id && i.selectedSize === item.selectedSize
+      );
       if (existing) {
         return prev.map((i) =>
-          i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i
+          i.id === item.id && i.selectedSize === item.selectedSize
+            ? { ...i, quantity: i.quantity + 1 }
+            : i
         );
       }
       return [...prev, { ...item, quantity: 1 }];
     });
   };
 
-  const removeFromCart = (id) => {
-    setCartItems((prev) => prev.filter((i) => i.id !== id));
+  const removeFromCart = (id, selectedSize) => {
+    setCartItems((prev) =>
+      prev.filter((i) => !(i.id === id && i.selectedSize === selectedSize))
+    );
   };
 
-  const updateQuantity = (id, delta) => {
+  const updateQuantity = (id, selectedSize, delta) => {
     setCartItems((prev) =>
       prev.map((i) => {
-        if (i.id === id) {
+        if (i.id === id && i.selectedSize === selectedSize) {
           const newQty = Math.max(1, i.quantity + delta);
           return { ...i, quantity: newQty };
         }
@@ -65,6 +71,7 @@ export function CartProvider({ children }) {
       })
     );
   };
+
 
   const clearCart = () => setCartItems([]);
 
@@ -103,6 +110,28 @@ export function CartProvider({ children }) {
   const cartTax = subtotal * 0.10;
   const cartTotal = subtotal + cartTax;
 
+  const [customerOrders, setCustomerOrders] = useState(() => {
+    const saved = localStorage.getItem('customer_orders');
+    return saved ? JSON.parse(saved) : [];
+  });
+
+  useEffect(() => {
+    localStorage.setItem('customer_orders', JSON.stringify(customerOrders));
+  }, [customerOrders]);
+
+  const addCustomerOrder = (order) => {
+    setCustomerOrders((prev) => [
+      { ...order, viewed: false, createdAt: new Date().toISOString() },
+      ...prev,
+    ]);
+  };
+
+  const markOrdersAsViewed = () => {
+    setCustomerOrders((prev) => prev.map((o) => ({ ...o, viewed: true })));
+  };
+
+  const unreadOrdersCount = customerOrders.filter((o) => !o.viewed).length;
+
   return (
     <CartContext.Provider
       value={{
@@ -125,6 +154,10 @@ export function CartProvider({ children }) {
         isFavorite,
         clearFavorites,
         toggleFavorites,
+        customerOrders,
+        addCustomerOrder,
+        markOrdersAsViewed,
+        unreadOrdersCount,
         CURRENCY,
         parsePrice,
       }}
@@ -132,4 +165,5 @@ export function CartProvider({ children }) {
       {children}
     </CartContext.Provider>
   );
+
 }

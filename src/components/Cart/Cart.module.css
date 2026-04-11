@@ -106,8 +106,17 @@
 .itemContent h4 {
   font-size: 1.7rem;
   color: var(--black);
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.2rem;
 }
+
+.itemSize {
+  display: block;
+  font-size: 1.3rem;
+  color: var(--green);
+  font-weight: 500;
+  margin-bottom: 0.8rem;
+}
+
 
 .priceContainer {
   display: flex;
