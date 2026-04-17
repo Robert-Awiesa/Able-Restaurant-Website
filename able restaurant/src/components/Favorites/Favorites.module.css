@@ -1,0 +1,175 @@
+.favContainer {
+  position: fixed;
+  top: 0;
+  right: -110%;
+  width: 100%;
+  height: 100%;
+  z-index: 2000;
+  display: flex;
+  justify-content: flex-end;
+  transition: right 0.4s ease;
+}
+
+.favContainer.active {
+  right: 0;
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+}
+
+.favBox {
+  position: relative;
+  width: 40rem;
+  height: 100%;
+  background: #fff;
+  padding: 2.5rem;
+  display: flex;
+  flex-direction: column;
+  box-shadow: var(--box-shadow);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 0.1rem solid rgba(0, 0, 0, 0.1);
+  padding-bottom: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.header h3 {
+  font-size: 2.2rem;
+  color: var(--black);
+}
+
+.closeBtn {
+  font-size: 2.5rem;
+  color: var(--black);
+  background: none;
+}
+
+.closeBtn:hover {
+  color: var(--green);
+}
+
+.itemsList {
+  flex: 1;
+  overflow-y: auto;
+  margin-bottom: 2rem;
+}
+
+.favItem {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 1.5rem 0;
+  border-bottom: 0.1rem solid rgba(0, 0, 0, 0.05);
+}
+
+.itemImg {
+  width: 8rem;
+  height: 8rem;
+  object-fit: contain;
+  border-radius: 0.5rem;
+}
+
+.itemContent {
+  flex: 1;
+}
+
+.itemContent h4 {
+  font-size: 1.7rem;
+  color: var(--black);
+  margin-bottom: 0.5rem;
+}
+
+.itemPrice {
+  font-size: 1.6rem;
+  color: var(--green);
+  font-weight: 600;
+  display: block;
+  margin-bottom: 1rem;
+}
+
+.addCartBtn {
+  display: inline-block;
+  padding: 0.6rem 1.2rem;
+  background: var(--black);
+  color: #fff;
+  font-size: 1.4rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+}
+
+.addCartBtn:hover {
+  background: var(--green);
+}
+
+.addCartBtn i {
+  margin-right: 0.5rem;
+}
+
+.deleteBtn {
+  font-size: 2rem;
+  color: var(--light-color);
+  background: none;
+}
+
+.deleteBtn:hover {
+  color: #e74c3c;
+}
+
+.emptyMsg {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+}
+
+.emptyMsg i {
+  font-size: 6rem;
+  color: #ccc;
+}
+
+.emptyMsg p {
+  font-size: 2rem;
+  color: var(--light-color);
+}
+
+.footer {
+  border-top: 0.1rem solid rgba(0, 0, 0, 0.1);
+  padding-top: 2rem;
+}
+
+.clearBtn {
+  display: block;
+  width: 100%;
+  padding: 1.5rem;
+  background: none;
+  border: 0.1rem solid #e74c3c;
+  color: #e74c3c;
+  text-align: center;
+  font-size: 1.6rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+}
+
+.clearBtn:hover {
+  background: #e74c3c;
+  color: #fff;
+}
+
+@media (max-width: 450px) {
+  .favBox {
+    width: 100%;
+  }
+}

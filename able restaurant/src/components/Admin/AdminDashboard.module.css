@@ -1,0 +1,612 @@
+.adminLayout {
+  display: flex;
+  min-height: 100vh;
+  background: #f4f7f6;
+  font-family: var(--font-family, sans-serif);
+}
+
+.sidebar {
+  width: 26rem;
+  background: var(--black);
+  color: #fff;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0.2rem 0 1rem rgba(0, 0, 0, 0.1);
+}
+
+.sidebarTitle {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 4rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.sidebarTitle i {
+  color: var(--green);
+}
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.navItem {
+  padding: 1.2rem 1.5rem;
+  font-size: 1.6rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  color: #eee;
+}
+
+.navItem:hover,
+.navItemActive {
+  background: var(--green);
+  color: #fff;
+  transform: translateX(0.5rem);
+}
+
+
+.logoutBtn {
+  margin-top: auto;
+  padding: 1.2rem 1.5rem;
+  font-size: 1.6rem;
+  color: #ff6b6b;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  border-radius: 0.5rem;
+  transition: all 0.3s ease;
+}
+
+.logoutBtn:hover {
+  background: rgba(255, 107, 107, 0.1);
+  color: #ff4757;
+}
+
+.content {
+  flex: 1;
+  padding: 4rem;
+  overflow-y: auto;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 3rem;
+}
+
+.header h2 {
+  font-size: 2.8rem;
+  color: #2c3e50;
+}
+
+/* ── Stats ── */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+  gap: 2rem;
+  margin-bottom: 4rem;
+}
+
+.statCard {
+  background: #fff;
+  padding: 2.5rem;
+  border-radius: 1rem;
+  box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.05);
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+.statIcon {
+  height: 6rem;
+  width: 6rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5rem;
+}
+
+.statInfo h3 {
+  font-size: 3rem;
+  color: #2c3e50;
+}
+
+.statInfo p {
+  font-size: 1.4rem;
+  color: #7f8c8d;
+}
+
+/* ── Order Cards ── */
+.cardsScroll {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(30rem, 1fr));
+  gap: 2rem;
+}
+
+.orderCard {
+  background: #fff;
+  border-radius: 1rem;
+  box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s;
+  border-left: 0.5rem solid #bdc3c7;
+}
+
+.orderCard:hover {
+  transform: translateY(-0.5rem);
+}
+
+.deliveryCard {
+  border-left-color: #e67e22;
+  /* Warning/Orange for Delivery */
+  grid-row: span 1;
+  /* To make it "larger", we can give it more padding or a specific height if needed, 
+     but letting it expand naturally is often better for content. */
+  transform: scale(1.02);
+  box-shadow: 0 1rem 2rem rgba(230, 126, 34, 0.1);
+}
+
+.cardHeader {
+  padding: 1.5rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 0.1rem solid #eee;
+}
+
+.orderId {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #2c3e50;
+}
+
+.cardBody {
+  padding: 2rem;
+  flex: 1;
+}
+
+.customerInfo {
+  margin-bottom: 1.5rem;
+}
+
+.customerInfo strong {
+  font-size: 1.8rem;
+  color: #2c3e50;
+  display: block;
+  margin-bottom: 0.3rem;
+}
+
+.customerInfo p {
+  font-size: 1.4rem;
+  color: #7f8c8d;
+}
+
+.typeInfo {
+  background: #f8f9fa;
+  padding: 1.2rem;
+  border-radius: 0.8rem;
+  margin-bottom: 2rem;
+}
+
+.typeLabel {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: 1.5rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.requestedTime {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  font-size: 1.4rem;
+  color: var(--green);
+  font-weight: 700;
+  margin-top: 0.5rem;
+}
+
+.locationDetail {
+  margin-top: 0.8rem;
+  font-size: 1.4rem;
+  color: #34495e;
+  padding-top: 0.8rem;
+  border-top: 0.1rem dashed #ddd;
+  line-height: 1.4;
+}
+
+.itemsList {
+  margin: 1.5rem 0;
+  padding: 1.2rem;
+  background: #f8f9fa;
+  border-radius: 0.8rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.itemRow {
+  font-size: 1.4rem;
+  color: var(--black);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.4rem 0;
+  border-bottom: 0.1rem solid rgba(0, 0, 0, 0.05);
+}
+
+.itemRow:last-child {
+  border-bottom: none;
+}
+
+.itemMain {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  flex: 1;
+}
+
+.itemQty {
+  font-weight: 700;
+  color: #555;
+  min-width: 2.5rem;
+}
+
+.itemName {
+  flex: 1;
+}
+
+.itemSize {
+  font-weight: 700;
+  color: var(--green);
+  font-size: 1.2rem;
+  text-transform: uppercase;
+  background: #e1f5ee;
+  padding: 0.1rem 0.5rem;
+  border-radius: 0.4rem;
+}
+
+.itemRowPrice {
+  font-weight: 600;
+  color: #666;
+  font-size: 1.3rem;
+  white-space: nowrap;
+}
+
+
+
+.totalRow {
+  display: flex;
+  justify-content: space-between;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--green);
+  margin-top: 1rem;
+}
+
+.cardFooter {
+  padding: 1.5rem 2rem;
+  background: #f8f9fa;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 0.1rem solid #eee;
+}
+
+.timeTag {
+  font-size: 1.3rem;
+  color: #95a5a6;
+}
+
+.status {
+  padding: 0.4rem 0.8rem;
+  border-radius: 2rem;
+  font-size: 1.1rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.pending {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.processing {
+  background: #d1ecf1;
+  color: #0c5460;
+}
+
+.completed {
+  background: #d4edda;
+  color: #155724;
+}
+
+.unread {
+  background: #ffeaa7;
+  color: #d35400;
+}
+
+.read {
+  background: #f1f2f6;
+  color: #7f8c8d;
+}
+
+.readCard {
+  opacity: 0.8;
+  border-left-color: #bdc3c7;
+  background: #fafafa;
+}
+
+.messageContent {
+  margin: 1.5rem 0;
+  padding: 1.5rem;
+  background: #fff;
+  border: 0.1rem solid #eee;
+  border-radius: 0.8rem;
+  font-size: 1.4rem;
+  color: #2c3e50;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.timeRow {
+  font-size: 1.2rem;
+  color: #95a5a6;
+  margin-top: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.badge {
+  background: #ff4757;
+  color: #fff;
+  font-size: 1.1rem;
+  font-weight: 700;
+  padding: 0.2rem 0.6rem;
+  border-radius: 1rem;
+  margin-left: auto;
+  box-shadow: 0 0.2rem 0.4rem rgba(255, 71, 87, 0.3);
+}
+
+.navText {
+  flex: 1;
+}
+
+.actions {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+.actionBtn {
+  padding: 0.8rem 1.4rem;
+  font-size: 1.3rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  border: none;
+  background: #fff;
+  box-shadow: 0 0.2rem 0.5rem rgba(0, 0, 0, 0.1);
+  transition: all 0.3s;
+}
+
+.actionBtn:hover {
+  transform: translateY(-0.2rem);
+}
+
+.completeBtn {
+  background: var(--green);
+  color: #fff;
+}
+
+.deleteBtn {
+  font-size: 1.6rem;
+  color: #e74c3c;
+  cursor: pointer;
+  background: none;
+  border: none;
+  transition: opacity 0.3s;
+}
+
+.deleteBtn:hover {
+  opacity: 0.7;
+}
+
+/* ── Login ── */
+.loginOverlay {
+  position: fixed;
+  inset: 0;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.loginCard {
+  width: 100%;
+  max-width: 40rem;
+  padding: 4rem;
+  text-align: center;
+}
+
+.loginCard h1 {
+  font-size: 3rem;
+  color: var(--green);
+  margin-bottom: 1rem;
+}
+
+.loginCard p {
+  font-size: 1.6rem;
+  color: #7f8c8d;
+  margin-bottom: 3rem;
+}
+
+.loginInput {
+  width: 100%;
+  padding: 1.5rem;
+  font-size: 1.6rem;
+  border: 0.1rem solid #ddd;
+  border-radius: 0.5rem;
+  margin-bottom: 2rem;
+  outline: none;
+}
+
+.loginInput:focus {
+  border-color: var(--green);
+}
+
+.loginBtn {
+  width: 100%;
+  padding: 1.5rem;
+  font-size: 1.8rem;
+  background: var(--green);
+  color: #fff;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+}
+
+@media (max-width: 1024px) {
+  .sidebar {
+    width: 8rem;
+    padding: 2rem 1rem;
+  }
+
+  .sidebarTitle span,
+  .navItem span,
+  .logoutBtn span {
+    display: none;
+  }
+
+  .sidebarTitle i,
+  .navItem i,
+  .logoutBtn i {
+    font-size: 2.2rem;
+  }
+}
+
+/* ── Confirmation Modal ── */
+.confirmOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.confirmCard {
+  background: #fff;
+  padding: 3rem;
+  border-radius: 1.2rem;
+  width: 100%;
+  max-width: 32rem;
+  text-align: center;
+  box-shadow: 0 2rem 6rem rgba(0,0,0,0.2);
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(2rem); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+.confirmIcon {
+  font-size: 4rem;
+  color: #e74c3c;
+  margin-bottom: 1.5rem;
+}
+
+.confirmIcon i {
+  display: block;
+}
+
+.confirmCard h4 {
+  font-size: 2.2rem;
+  color: #2c3e50;
+  margin-bottom: 1rem;
+}
+
+.confirmCard p {
+  font-size: 1.5rem;
+  color: #7f8c8d;
+  margin-bottom: 2.5rem;
+  line-height: 1.5;
+}
+
+.confirmActions {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.confirmBtn, .cancelBtn {
+  flex: 1;
+  padding: 1.2rem;
+  font-size: 1.5rem;
+  font-weight: 600;
+  border-radius: 0.8rem;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+}
+
+.confirmBtn {
+  background: #e74c3c;
+  color: #fff;
+}
+
+.confirmBtn:hover {
+  background: #c0392b;
+  transform: scale(1.02);
+}
+
+.cancelBtn {
+  background: #ecf0f1;
+  color: #7f8c8d;
+}
+
+.cancelBtn:hover {
+  background: #bdc3c7;
+  color: #2c3e50;
+}
+
+@media (max-width: 768px) {
+  .adminLayout {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    height: auto;
+  }
+
+  .content {
+    padding: 2rem;
+  }
+}
