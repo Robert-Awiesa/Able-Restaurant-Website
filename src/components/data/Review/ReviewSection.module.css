@@ -1,0 +1,78 @@
+.review {
+  padding: 2rem 7%;
+}
+
+.sliderContainer {
+  padding: 2rem 0 5rem 0;
+}
+
+.mySwiper {
+  padding-bottom: 4rem !important;
+}
+
+.swiperSlide {
+  height: auto !important; /* Allow Swiper to set height */
+  display: flex;
+}
+
+.slide {
+  background: #fff;
+  padding: 3rem;
+  box-shadow: var(--box-shadow);
+  border: 0.1rem solid rgba(0, 0, 0, 0.1);
+  border-radius: 0.5rem;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  transition: transform 0.3s;
+}
+
+.slide:hover {
+  transform: translateY(-0.5rem);
+  border-color: var(--green);
+}
+
+.quoteIcon {
+  position: absolute;
+  top: 2rem;
+  right: 2rem;
+  font-size: 5rem;
+  color: rgba(39, 174, 96, 0.1);
+}
+
+.user {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+  padding-bottom: 2rem;
+}
+
+.avatar {
+  height: 7rem;
+  width: 7rem;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.userInfo {
+  display: flex;
+  flex-direction: column;
+}
+
+.userName {
+  color: var(--black);
+  font-size: 2rem;
+  padding-bottom: 0.2rem;
+  font-weight: 600;
+}
+
+.text {
+  font-size: 1.6rem;
+  line-height: 1.8;
+  color: var(--light-color);
+  font-style: italic;
+  flex: 1; /* Pushes content if needed */
+}
