@@ -83,6 +83,12 @@ export default function ContactForm() {
         />
       </div>
 
+      {errors.submit && (
+        <div style={{ color: 'red', marginTop: '1rem', marginBottom: '1rem', textAlign: 'center' }} role="alert">
+          {errors.submit}
+        </div>
+      )}
+
       <Button type="submit">send message</Button>
     </form>
   );

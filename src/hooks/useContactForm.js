@@ -63,7 +63,7 @@ export function useContactForm() {
       // Determine the base URL (matching AdminContext pattern)
       const BACKEND_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
       
-      const response = await fetch(`${BACKEND_BASE_URL}/api/messages`, {
+      let response = await fetch(`${BACKEND_BASE_URL}/api/messages`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -71,17 +71,36 @@ export function useContactForm() {
         body: JSON.stringify(fields),
       });
 
+      // Vercel serverless cold starts can sometimes drop the connection with a 5xx error.
+      // We retry once after a short delay since the DB is likely connected by now.
+      if (response.status >= 500) {
+        await new Promise(r => setTimeout(r, 1500));
+        response = await fetch(`${BACKEND_BASE_URL}/api/messages`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(fields),
+        });
+      }
+
       if (response.ok) {
         setSubmitted(true);
         setFields(INITIAL_STATE);
         setErrors({});
       } else {
-        const data = await response.json();
-        setErrors({ submit: data.error || 'Failed to send message. Please try again.' });
+        let errMessage = 'Failed to send message. Please try again.';
+        try {
+          const data = await response.json();
+          if (data.error) errMessage = data.error;
+        } catch(e) {
+          // Response was not JSON
+        }
+        setErrors({ submit: errMessage });
       }
     } catch (err) {
       console.error('Contact form submission error:', err);
-      setErrors({ submit: 'Network error. Please check your connection.' });
+      setErrors({ submit: 'Network error. Please check your connection and try again.' });
     }
   }, [fields]);
 
