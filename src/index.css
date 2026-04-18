@@ -1,0 +1,69 @@
+/* ─────────────────────────────────────────
+   Google Font
+───────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@200;300;400;600;700&display=swap');
+
+/* ─────────────────────────────────────────
+   Design Tokens
+───────────────────────────────────────── */
+:root {
+  --green:       #27ae60;
+  --black:       #192a56;
+  --light-color: #666;
+  --box-shadow:  0 0.5rem 1.5rem rgba(0, 0, 0, 0.1);
+}
+
+/* ─────────────────────────────────────────
+   Base Reset
+───────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  margin:  0;
+  padding: 0;
+  box-sizing:      border-box;
+  text-decoration: none;
+  outline: none;
+  border:  none;
+  text-transform:  capitalize;
+  transition: all 0.2s linear;
+}
+
+body {
+  font-family: 'Nunito', sans-serif;
+}
+
+html {
+  font-size:    62.5%;   /* 1rem = 10px */
+  overflow-x:   hidden;
+  scroll-padding-top: 5.5rem;
+  scroll-behavior:    smooth;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+/* ─────────────────────────────────────────
+   Section Alternating Background
+───────────────────────────────────────── */
+section:nth-child(even) {
+  background: #eee;
+}
+
+/* ─────────────────────────────────────────
+   Responsive Typography
+───────────────────────────────────────── */
+@media (max-width: 991px) {
+  html { font-size: 55%; }
+}
+
+@media (max-width: 450px) {
+  html { font-size: 50%; }
+}

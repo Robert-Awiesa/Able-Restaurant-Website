@@ -1,0 +1,23 @@
+.container {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  animation: fadeOut 0.5s ease forwards;
+  animation-delay: 2.5s; /* starts fading just before useLoader removes it */
+}
+
+.gif {
+  width: 35rem;
+}
+
+@keyframes fadeOut {
+  to {
+    opacity: 0;
+    pointer-events: none;
+  }
+}
