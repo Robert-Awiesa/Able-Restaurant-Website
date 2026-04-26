@@ -28,10 +28,11 @@ export function useScrollSpy(sectionIds, offset = 150) {
       const el = document.getElementById(id);
       if (!el) continue;
 
-      const top    = el.offsetTop - offset;
-      const bottom = top + el.offsetHeight;
-
-      if (scrollY >= top && scrollY < bottom) {
+      const rect = el.getBoundingClientRect();
+      
+      // If the top of the section is near the top of the viewport (with offset)
+      // and the bottom is still below the offset point.
+      if (rect.top <= offset && rect.bottom > offset) {
         foundId = id;
         break;
       }
@@ -43,9 +44,10 @@ export function useScrollSpy(sectionIds, offset = 150) {
   }, [sectionIds, offset]);
 
   useEffect(() => {
+    // Initial check
     onScroll();
-    // Run again after a short delay to account for initial layout/image shifts
-    const timer = setTimeout(onScroll, 100);
+    // Run again after a short delay to account for layout shifts
+    const timer = setTimeout(onScroll, 150);
 
     window.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('resize', onScroll);
