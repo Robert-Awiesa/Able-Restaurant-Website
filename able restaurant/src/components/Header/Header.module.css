@@ -115,13 +115,21 @@
     clip-path: polygon(0 0, 100% 0, 100% 100%, 0% 100%);
   }
 
-  .navLink,
-  .navLinkActive {
+  .navLink {
     display: block;
     padding: 1.5rem;
     margin: 0.5rem;
     font-size: 2rem;
     background: #eee;
+  }
+
+  .navLinkActive {
+    display: block;
+    padding: 1.5rem;
+    margin: 0.5rem;
+    font-size: 2rem;
+    color: white;
+    background: var(--green);
   }
 
   .menuBtn {

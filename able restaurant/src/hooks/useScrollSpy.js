@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 
 /**
  * useScrollSpy
@@ -7,31 +7,62 @@ import { useEffect, useState } from 'react';
  * @param {number}   offset     - px subtracted from scrollY before comparing (accounts for sticky header)
  */
 export function useScrollSpy(sectionIds, offset = 150) {
-  const [activeId, setActiveId] = useState(sectionIds[0] ?? '');
+  // 1. Initialize from hash if present, else fallback to first section
+  const [activeId, setActiveId] = useState(() => {
+    if (typeof window === 'undefined') return sectionIds[0] || '';
+    const hash = window.location.hash.slice(1);
+    return sectionIds.includes(hash) ? hash : (sectionIds[0] || '');
+  });
 
-  useEffect(() => {
-    function onScroll() {
-      const scrollY = window.scrollY;
+  const onScroll = useCallback(() => {
+    const scrollY = window.scrollY;
 
-      for (const id of sectionIds) {
-        const el = document.getElementById(id);
-        if (!el) continue;
+    // Special case: if at the very top, always highlight the first section
+    if (scrollY <= 50) {
+      setActiveId(sectionIds[0] || '');
+      return;
+    }
 
-        const top    = el.offsetTop - offset;
-        const bottom = top + el.offsetHeight;
+    let foundId = '';
+    for (const id of sectionIds) {
+      const el = document.getElementById(id);
+      if (!el) continue;
 
-        if (scrollY >= top && scrollY < bottom) {
-          setActiveId(id);
-          break;
-        }
+      const top    = el.offsetTop - offset;
+      const bottom = top + el.offsetHeight;
+
+      if (scrollY >= top && scrollY < bottom) {
+        foundId = id;
+        break;
       }
     }
 
-    window.addEventListener('scroll', onScroll, { passive: true });
-    onScroll(); // run once on mount
-
-    return () => window.removeEventListener('scroll', onScroll);
+    if (foundId) {
+      setActiveId(foundId);
+    }
   }, [sectionIds, offset]);
 
-  return activeId;
+  useEffect(() => {
+    onScroll();
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+
+    // Listen for hash changes (e.g. when user clicks a link)
+    const handleHashChange = () => {
+      const hash = window.location.hash.slice(1);
+      if (sectionIds.includes(hash)) {
+        setActiveId(hash);
+      }
+    };
+    window.addEventListener('hashchange', handleHashChange);
+
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onScroll);
+      window.removeEventListener('hashchange', handleHashChange);
+    };
+  }, [onScroll, sectionIds]);
+
+  return activeId || sectionIds[0] || '';
 }

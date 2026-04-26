@@ -37,8 +37,8 @@ export default function ContactSection() {
         <div className={styles.detailCard}>
           <i className="fa-solid fa-envelope" aria-hidden="true" />
           <h4>Email Us</h4>
-          <p>info@ablerestro.com</p>
-          <p>orders@ablerestro.com</p>
+          <p>ablerestaurant@gmail.com</p>
+          <p>ablerestaurant.gh@gmail.com</p>
         </div>
 
         <div className={styles.detailCard}>
