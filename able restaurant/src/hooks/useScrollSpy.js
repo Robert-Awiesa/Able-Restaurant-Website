@@ -44,6 +44,8 @@ export function useScrollSpy(sectionIds, offset = 150) {
 
   useEffect(() => {
     onScroll();
+    // Run again after a short delay to account for initial layout/image shifts
+    const timer = setTimeout(onScroll, 100);
 
     window.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('resize', onScroll);
@@ -61,6 +63,7 @@ export function useScrollSpy(sectionIds, offset = 150) {
       window.removeEventListener('scroll', onScroll);
       window.removeEventListener('resize', onScroll);
       window.removeEventListener('hashchange', handleHashChange);
+      clearTimeout(timer);
     };
   }, [onScroll, sectionIds]);
 
