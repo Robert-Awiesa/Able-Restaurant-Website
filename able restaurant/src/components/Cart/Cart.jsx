@@ -37,8 +37,9 @@ export default function Cart() {
   const config = {
     reference: (new Date()).getTime().toString(),
     email: email || 'customer@ablerestro.com',
-    amount: cartTotal * 100, // Amount is in the country's lowest currency. Kobo
-    publicKey: import.meta.env.VITE_PAYSTACK_PUBLIC_KEY || 'pk_test_b15b70d47d047e704e60bf7c8fb2df22201b1b7a', // Replace with your actual Paystack public key
+    amount: Math.round(cartTotal * 100), // Amount is in the country's lowest currency (Pesewas)
+    currency: 'GHS',
+    publicKey: import.meta.env.VITE_PAYSTACK_PUBLIC_KEY || 'pk_test_d8a416ec35c5feb5b0f39a3771918b1a15c8c1d7',
   };
 
   const initializePayment = usePaystackPayment(config);
