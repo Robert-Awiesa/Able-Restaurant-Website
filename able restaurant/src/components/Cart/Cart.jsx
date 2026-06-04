@@ -2,6 +2,7 @@ import { useState }   from 'react';
 import { useCart }    from '../../context/CartContext';
 import { useAdmin }   from '../../context/AdminContext';
 import styles         from './Cart.module.css';
+import { usePaystackPayment } from 'react-paystack';
 
 /**
  * Cart
@@ -30,7 +31,17 @@ export default function Cart() {
   const [contact, setContact]     = useState('');
   const [orderTimeType, setOrderTimeType] = useState('asap');
   const [scheduledTime, setScheduledTime] = useState('');
+  const [email, setEmail]         = useState('');
   const [modal, setModal] = useState(null); // { type: 'success'|'error', message, orderId? }
+
+  const config = {
+    reference: (new Date()).getTime().toString(),
+    email: email || 'customer@ablerestro.com',
+    amount: cartTotal * 100, // Amount is in the country's lowest currency. Kobo
+    publicKey: import.meta.env.VITE_PAYSTACK_PUBLIC_KEY || 'pk_test_b15b70d47d047e704e60bf7c8fb2df22201b1b7a', // Replace with your actual Paystack public key
+  };
+
+  const initializePayment = usePaystackPayment(config);
 
   const handleCheckout = async () => {
     if (cartItems.length === 0) return;
@@ -42,47 +53,61 @@ export default function Cart() {
       setModal({ type: 'error', message: 'Please enter your contact number.' });
       return;
     }
+    if (!email.trim()) {
+      setModal({ type: 'error', message: 'Please enter your email for the payment receipt.' });
+      return;
+    }
     if (orderType === 'delivery' && !location.trim()) {
       setModal({ type: 'error', message: 'Please provide a delivery location.' });
       return;
     }
 
-    const newOrder = {
-      name: customerName.trim(),
-      phone: contact.trim(),
-      items: cartItems.map(item => ({ 
-        name: item.name, 
-        size: item.selectedSize || null,
-        price: item.price,
-        qty: item.quantity 
-      })),
+    const onSuccess = async (reference) => {
+      const newOrder = {
+        name: customerName.trim(),
+        email: email.trim(),
+        phone: contact.trim(),
+        items: cartItems.map(item => ({ 
+          name: item.name, 
+          size: item.selectedSize || null,
+          price: item.price,
+          qty: item.quantity 
+        })),
+        total: cartTotal,
+        orderType,
+        location: orderType === 'delivery' ? location : (orderType === 'dine-in' ? 'Table Order' : 'Store Pickup'),
+        requestedTime: orderTimeType === 'asap' ? 'ASAP' : formatTime(scheduledTime),
+        paymentReference: reference.reference
+      };
 
-      total: cartTotal,
-      orderType,
-      location: orderType === 'delivery' ? location : (orderType === 'dine-in' ? 'Table Order' : 'Store Pickup'),
-      requestedTime: orderTimeType === 'asap' ? 'ASAP' : formatTime(scheduledTime)
+      const result = await addOrder(newOrder);
+      
+      if (result.success) {
+        addCustomerOrder({
+          orderId: result.orderId,
+          items: newOrder.items,
+          total: newOrder.total,
+          orderType: newOrder.orderType,
+          status: 'pending'
+        });
+        setModal({ type: 'success', orderId: result.orderId });
+        clearCart();
+        setLocation('');
+        setCustomerName('');
+        setContact('');
+        setEmail('');
+        setOrderTimeType('asap');
+        setScheduledTime('');
+      } else {
+        setModal({ type: 'error', message: result.error });
+      }
     };
 
-    const result = await addOrder(newOrder);
-    
-    if (result.success) {
-      addCustomerOrder({
-        orderId: result.orderId,
-        items: newOrder.items,
-        total: newOrder.total,
-        orderType: newOrder.orderType,
-        status: 'pending'
-      });
-      setModal({ type: 'success', orderId: result.orderId });
-      clearCart();
-      setLocation('');
-      setCustomerName('');
-      setContact('');
-      setOrderTimeType('asap');
-      setScheduledTime('');
-    } else {
-      setModal({ type: 'error', message: result.error });
-    }
+    const onClose = () => {
+      setModal({ type: 'error', message: 'Payment was canceled.' });
+    };
+
+    initializePayment(onSuccess, onClose);
   };
 
   const handleModalOk = () => {
@@ -192,6 +217,13 @@ export default function Cart() {
                     className={styles.locationInput}
                     value={customerName}
                     onChange={(e) => setCustomerName(e.target.value)}
+                  />
+                  <input
+                    type="email"
+                    placeholder="Email address"
+                    className={styles.locationInput}
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                   />
                   <input
                     type="tel"
