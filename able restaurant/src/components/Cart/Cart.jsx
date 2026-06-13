@@ -34,15 +34,15 @@ export default function Cart() {
   const [email, setEmail]         = useState('');
   const [modal, setModal] = useState(null); // { type: 'success'|'error', message, orderId? }
 
-  const config = {
-    reference: (new Date()).getTime().toString(),
+  const paystackConfig = {
+    // reference is set dynamically per checkout to avoid duplicate-transaction errors
     email: email || 'customer@ablerestro.com',
     amount: Math.round(cartTotal * 100), // Amount is in the country's lowest currency (Pesewas)
     currency: 'GHS',
     publicKey: import.meta.env.VITE_PAYSTACK_PUBLIC_KEY || 'pk_test_d8a416ec35c5feb5b0f39a3771918b1a15c8c1d7',
   };
 
-  const initializePayment = usePaystackPayment(config);
+  const initializePayment = usePaystackPayment(paystackConfig);
 
   const handleCheckout = async () => {
     if (cartItems.length === 0) return;
@@ -108,7 +108,18 @@ export default function Cart() {
       setModal({ type: 'error', message: 'Payment was canceled.' });
     };
 
-    initializePayment(onSuccess, onClose);
+    // react-paystack v6 API: pass callbacks as an object, and provide a
+    // fresh reference on every checkout attempt to prevent duplicate-transaction
+    // rejections from Paystack.
+    initializePayment({
+      onSuccess,
+      onClose,
+      config: {
+        reference: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+        email: email.trim() || 'customer@ablerestro.com',
+        amount: Math.round(cartTotal * 100),
+      },
+    });
   };
 
   const handleModalOk = () => {
